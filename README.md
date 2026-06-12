@@ -1,6 +1,8 @@
-# Ecommerce Backend
+# ecommerce-microservices-springboot
 
-Spring Boot backend based on the provided ecommerce PRD and HLD.
+Microservices-based ecommerce application using Spring Boot, Kafka, Redis, Elasticsearch, and MySQL/MongoDB.
+
+This Spring Boot backend is based on the provided ecommerce PRD and HLD.
 
 ## Features
 
