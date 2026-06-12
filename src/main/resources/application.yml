@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: ecommerce-backend
+  datasource:
+    url: jdbc:h2:mem:ecommerce;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    issuer: ecommerce-backend
+    secret: change-this-development-secret-change-this-development-secret
+    expiration-minutes: 120
+
+---
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce
+    username: ecommerce
+    password: ecommerce
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
