@@ -12,6 +12,8 @@ The implementation is built using Spring Boot and follows a modular architecture
 
 The application uses Spring Security with JWT-based authentication, Spring Data JPA for persistence, H2 for local development, MySQL profile support for production-style relational storage, and Docker Compose definitions for supporting infrastructure such as MySQL, Kafka, Redis, MongoDB, and Elasticsearch. Domain events are published through an abstraction that currently logs events and can later be connected to Kafka.
 
+The project was refined with high-level reference from the public repository `geeky-sanjay/shop`. Only broad ecommerce design ideas were used for comparison, and no source code, package structure, class implementation, or business logic was copied.
+
 ## 3. Introduction
 
 Modern ecommerce systems must support secure user access, fast product discovery, reliable cart and checkout flows, order tracking, and payment processing. These requirements are usually handled by multiple backend services that communicate synchronously through APIs and asynchronously through a message broker.
@@ -57,7 +59,11 @@ The main objectives of the project are:
 - Cart add, update, remove, and review operations.
 - Checkout and order creation.
 - Payment record creation and receipt generation.
+- Simulated payment checkout-session creation.
+- Admin catalog and inventory management.
 - Basic order tracking.
+- API documentation using Swagger UI.
+- Health endpoint using Spring Boot Actuator.
 - Sample product data seeding.
 - Docker Compose setup for supporting infrastructure.
 - Maven-based build and test setup.
@@ -86,6 +92,8 @@ The main objectives of the project are:
 | Build Tool | Maven |
 | Testing | JUnit, Spring Boot Test |
 | Infrastructure | Docker Compose |
+| API Documentation | Springdoc OpenAPI, Swagger UI |
+| Health Monitoring | Spring Boot Actuator |
 | Planned Cache | Redis |
 | Planned Document Store | MongoDB |
 | Planned Search Engine | Elasticsearch |
@@ -142,6 +150,7 @@ The submitted repository currently implements the backend as a modular Spring Bo
 |---|---|
 | `com.example.ecommerce.user` | Registration, login, profile management, password reset token generation |
 | `com.example.ecommerce.catalog` | Product category, product details, browsing, keyword search |
+| `com.example.ecommerce.catalog.AdminCatalogController` | Admin product, category, and inventory management |
 | `com.example.ecommerce.cart` | Cart item management and cart total calculation |
 | `com.example.ecommerce.order` | Checkout, order creation, order history, order tracking |
 | `com.example.ecommerce.payment` | Payment record creation and receipt generation |
@@ -172,8 +181,10 @@ This design can be migrated into true microservices by extracting each package i
 | Multiple payment options | Payment method field supported | `payment`, `order` |
 | Secure transactions | Simulated payment record; real gateway pending | `payment` |
 | Payment receipt | Implemented | `payment` |
+| Checkout session | Simulated gateway session implemented | `payment` |
 | Secure authentication | Implemented using JWT | `common.security` |
 | Session management | Stateless bearer token expiration | `common.security` |
+| Admin product management | Implemented with admin role protection | `catalog`, `common.security` |
 
 ## 11. Database Design
 
@@ -358,6 +369,8 @@ Important classes:
 
 The security module uses Spring Security and JWT. Public endpoints include registration, login, password reset, and product browsing. Cart, order, payment, and profile operations require an authenticated bearer token.
 
+Admin endpoints under `/api/admin/**` require the `ADMIN` role.
+
 Important classes:
 
 - `SecurityConfig`
@@ -368,6 +381,8 @@ Important classes:
 ### 13.3 Product Catalog Module
 
 The catalog module manages product categories and product details. It supports listing all products, filtering by category, retrieving product details by ID, and searching by keyword.
+
+The admin catalog controller supports creating categories, creating products, updating products, and adjusting inventory stock.
 
 Important classes:
 
@@ -405,6 +420,8 @@ Important classes:
 ### 13.6 Payment Module
 
 The payment module records payment information and generates a receipt. The current implementation simulates successful payment and creates a transaction reference.
+
+It also supports a simulated checkout-session endpoint that follows the same user experience concept as hosted payment checkout flows without integrating or copying any third-party payment gateway implementation.
 
 Important classes:
 
@@ -449,7 +466,16 @@ Important classes:
 | GET | `/api/products/search?q=phone` | Search products by keyword | No |
 | GET | `/api/products/{id}` | Get product details | No |
 
-### 14.4 Cart APIs
+### 14.4 Admin Catalog APIs
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| POST | `/api/admin/catalog/categories` | Create a product category | Admin |
+| POST | `/api/admin/catalog/products` | Create a product | Admin |
+| PUT | `/api/admin/catalog/products/{productId}` | Update product details | Admin |
+| PATCH | `/api/admin/catalog/products/{productId}/inventory` | Adjust product inventory | Admin |
+
+### 14.5 Cart APIs
 
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
@@ -458,7 +484,7 @@ Important classes:
 | PUT | `/api/cart/items/{productId}` | Update item quantity | Yes |
 | DELETE | `/api/cart/items/{productId}` | Remove item from cart | Yes |
 
-### 14.5 Order APIs
+### 14.6 Order APIs
 
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
@@ -466,10 +492,11 @@ Important classes:
 | GET | `/api/orders` | View order history | Yes |
 | GET | `/api/orders/{orderId}/tracking` | Track order status | Yes |
 
-### 14.6 Payment APIs
+### 14.7 Payment APIs
 
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
+| POST | `/api/payments/checkout-session` | Create a simulated payment checkout session | Yes |
 | GET | `/api/payments/{paymentId}/receipt` | Get payment receipt | Yes |
 
 ## 15. Sample API Flow
@@ -533,6 +560,7 @@ Security features include:
 - JWT token generation after login and registration.
 - JWT validation through a Spring Security filter.
 - Stateless session configuration.
+- Role-based protection for admin catalog APIs.
 - Protected user, cart, order, and payment APIs.
 - Public product browsing APIs.
 - Centralized error handling for API failures.
@@ -554,6 +582,7 @@ Default configuration:
 - Uses JPA automatic schema update.
 - Runs on port `8080`.
 - Configures JWT issuer, secret, and expiration.
+- Seeds a configurable local development admin user.
 
 MySQL profile:
 
@@ -628,6 +657,25 @@ H2 console:
 http://localhost:8080/h2-console
 ```
 
+Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+Health endpoint:
+
+```text
+http://localhost:8080/actuator/health
+```
+
+Development admin credentials:
+
+```text
+Email: admin@shop.local
+Password: Admin@12345
+```
+
 ### 21.3 Run Supporting Infrastructure
 
 ```bash
@@ -671,6 +719,7 @@ Future improvements can include:
 - Store carts in MongoDB and cache active carts in Redis.
 - Index products into Elasticsearch and support typo-tolerant full-text search.
 - Integrate a real payment gateway such as Stripe, Razorpay, or PayPal.
+- Replace development admin credentials with environment-specific secret management.
 - Add email notifications using Amazon SES.
 - Add admin APIs for managing categories, products, inventory, and order status.
 - Add integration tests and controller tests using MockMvc.
