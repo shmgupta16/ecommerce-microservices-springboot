@@ -706,7 +706,7 @@ The current implementation is a strong backend foundation, but it has some limit
 - Redis and MongoDB are included in infrastructure but not yet connected to the runtime cart implementation.
 - Payment processing is simulated and does not use a real payment gateway.
 - Password reset generates a token but does not send an email through Amazon SES.
-- Notification service is represented through event publishing readiness.
+- Notification service is planned for future work and is currently represented only through event publishing readiness.
 - Test coverage is limited to application context validation.
 
 ## 24. Future Enhancements

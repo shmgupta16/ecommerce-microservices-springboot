@@ -1,3 +1,6 @@
+## Optional support services for future integrations.
+## The current application runtime does not require all of these services to be running.
+
 services:
   mysql:
     image: mysql:8.4

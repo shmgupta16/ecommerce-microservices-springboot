@@ -1,6 +1,6 @@
 # ecommerce-microservices-springboot
 
-Microservices-based ecommerce application using Spring Boot, Kafka, Redis, Elasticsearch, and MySQL/MongoDB.
+Modular Spring Boot ecommerce backend with JWT authentication, JPA persistence, and event-publishing abstractions.
 
 This Spring Boot backend is based on the provided ecommerce PRD and HLD.
 
@@ -14,7 +14,7 @@ This Spring Boot backend is based on the provided ecommerce PRD and HLD.
 - Order history and tracking status APIs
 - Payment receipt endpoint
 - Event publisher abstraction for Kafka-ready domain events
-- Docker Compose for MySQL, Kafka, Redis, MongoDB, Elasticsearch, and Kong-friendly local architecture
+- Docker Compose for optional local infrastructure: MySQL, Kafka, Redis, MongoDB, and Elasticsearch
 - OpenAPI documentation through Swagger UI
 - Health endpoint through Spring Boot Actuator
 
@@ -99,7 +99,9 @@ This project is implemented as a modular monolith for local development speed. P
 - `cart`: Cart Service
 - `order`: Order Management Service
 - `payment`: Payment Service
-- `notification`: Notification Service placeholder via event publishing
+- `notification`: Planned future Notification Service, to be implemented through event publishing
 - `common`: cross-cutting API, events, and security helpers
 
 The `DomainEventPublisher` currently logs events and can be switched to Kafka by enabling the `kafka` profile and wiring `KafkaTemplate`.
+
+The services defined in `docker-compose.yml` are local support services for future integrations. The current runtime only requires the Spring Boot app and its configured database profile.
