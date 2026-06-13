@@ -15,6 +15,8 @@ This Spring Boot backend is based on the provided ecommerce PRD and HLD.
 - Payment receipt endpoint
 - Event publisher abstraction for Kafka-ready domain events
 - Docker Compose for MySQL, Kafka, Redis, MongoDB, Elasticsearch, and Kong-friendly local architecture
+- OpenAPI documentation through Swagger UI
+- Health endpoint through Spring Boot Actuator
 
 ## Run Locally
 
@@ -36,6 +38,18 @@ H2 console:
 http://localhost:8080/h2-console
 ```
 
+Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+Health endpoint:
+
+```text
+http://localhost:8080/actuator/health
+```
+
 ## Useful Endpoints
 
 - `POST /api/auth/register`
@@ -54,7 +68,12 @@ http://localhost:8080/h2-console
 - `POST /api/orders/checkout`
 - `GET /api/orders`
 - `GET /api/orders/{id}/tracking`
+- `POST /api/payments/checkout-session`
 - `GET /api/payments/{paymentId}/receipt`
+
+## Originality Note
+
+This project was refined with high-level reference from `geeky-sanjay/shop`, but no source code was copied. See `REFERENCE_NOTES.md` for the reference and originality notes.
 
 ## Architecture Notes
 
