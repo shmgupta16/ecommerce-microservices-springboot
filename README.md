@@ -61,6 +61,10 @@ http://localhost:8080/actuator/health
 - `GET /api/products`
 - `GET /api/products/search?q=phone`
 - `GET /api/products/{id}`
+- `POST /api/admin/catalog/categories`
+- `POST /api/admin/catalog/products`
+- `PUT /api/admin/catalog/products/{productId}`
+- `PATCH /api/admin/catalog/products/{productId}/inventory`
 - `GET /api/cart`
 - `POST /api/cart/items`
 - `PUT /api/cart/items/{productId}`
@@ -74,6 +78,17 @@ http://localhost:8080/actuator/health
 ## Originality Note
 
 This project was refined with high-level reference from `geeky-sanjay/shop`, but no source code was copied. See `REFERENCE_NOTES.md` for the reference and originality notes.
+
+## Development Admin
+
+For local demonstration, the default profile seeds an admin user:
+
+```text
+Email: admin@shop.local
+Password: Admin@12345
+```
+
+Change these values in `application.yml` before using the project outside a local development environment.
 
 ## Architecture Notes
 

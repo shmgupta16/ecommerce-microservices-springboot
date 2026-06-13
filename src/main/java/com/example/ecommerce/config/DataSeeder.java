@@ -4,16 +4,32 @@ import com.example.ecommerce.catalog.Category;
 import com.example.ecommerce.catalog.CategoryRepository;
 import com.example.ecommerce.catalog.Product;
 import com.example.ecommerce.catalog.ProductRepository;
+import com.example.ecommerce.user.AppUser;
+import com.example.ecommerce.user.UserRepository;
 import java.math.BigDecimal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataSeeder {
     @Bean
-    CommandLineRunner seedCatalog(CategoryRepository categoryRepository, ProductRepository productRepository) {
+    CommandLineRunner seedCatalog(CategoryRepository categoryRepository, ProductRepository productRepository,
+                                  UserRepository userRepository, PasswordEncoder passwordEncoder,
+                                  @Value("${app.seed.admin-email}") String adminEmail,
+                                  @Value("${app.seed.admin-password}") String adminPassword) {
         return args -> {
+            if (!userRepository.existsByEmail(adminEmail)) {
+                AppUser admin = new AppUser();
+                admin.setEmail(adminEmail);
+                admin.setFullName("Development Admin");
+                admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+                admin.setRole("ADMIN");
+                userRepository.save(admin);
+            }
+
             if (categoryRepository.count() > 0) {
                 return;
             }

@@ -38,6 +38,9 @@ app:
     issuer: ecommerce-backend
     secret: change-this-development-secret-change-this-development-secret
     expiration-minutes: 120
+  seed:
+    admin-email: admin@shop.local
+    admin-password: Admin@12345
 
 ---
 spring:
